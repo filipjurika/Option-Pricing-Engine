@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header text-center">
+        <h1 class="h3 mb-0">Option Pricing Engine</h1>
+        <p class="text-muted mb-0 mt-2">Compare pricing models for European and American options.</p>
+    </div>
+    <div class="card-body">
+        {% if error_message %}
+        <div class="alert alert-danger" role="alert">
+            {{ error_message }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/">
+            <div class="row g-3">
+                <!-- Market Parameters -->
+                <div class="col-md-4">
+                    <label for="S0" class="form-label">Spot Price ($S_0$)</label>
+                    <input type="number" step="any" class="form-control" id="S0" name="S0" value="{{ form_values.S0 }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="K" class="form-label">Strike Price ($K$)</label>
+                    <input type="number" step="any" class="form-control" id="K" name="K" value="{{ form_values.K }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="T" class="form-label">Time to Maturity ($T$ years)</label>
+                    <input type="number" step="any" class="form-control" id="T" name="T" value="{{ form_values.T }}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="r" class="form-label">Risk-free Rate ($r$)</label>
+                    <input type="number" step="any" class="form-control" id="r" name="r" value="{{ form_values.r }}" required>
+                    <div class="form-text">e.g., 0.05 for 5%</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="sigma" class="form-label">Volatility ($\sigma$)</label>
+                    <input type="number" step="any" class="form-control" id="sigma" name="sigma" value="{{ form_values.sigma }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="q" class="form-label">Dividend Yield ($q$)</label>
+                    <input type="number" step="any" class="form-control" id="q" name="q" value="{{ form_values.q }}" required>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Option Parameters -->
+                <div class="col-md-4">
+                    <label class="form-label">Option Type</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="option_type" id="call" value="call" {% if form_values.option_type == 'call' %}checked{% endif %}>
+                            <label class="form-check-label" for="call">Call</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="option_type" id="put" value="put" {% if form_values.option_type == 'put' %}checked{% endif %}>
+                            <label class="form-check-label" for="put">Put</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="style" class="form-label">Style</label>
+                    <select class="form-select" id="style" name="style">
+                        <option value="european" {% if form_values.style == 'european' %}selected{% endif %}>European</option>
+                        <option value="american" {% if form_values.style == 'american' %}selected{% endif %}>American</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="model" class="form-label">Pricing Model</label>
+                    <select class="form-select" id="model" name="model">
+                        <option value="bs" {% if form_values.model == 'bs' %}selected{% endif %}>Black-Scholes</option>
+                        <option value="binomial" {% if form_values.model == 'binomial' %}selected{% endif %}>Binomial</option>
+                    </select>
+                </div>
+
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">Price Option</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if price is not none %}
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h2 class="h4 mb-0 text-center">Results</h2>
+    </div>
+    <div class="card-body text-center">
+        <h3 class="display-4 mb-3">${{ "%.4f"|format(price) }}</h3>
+        <p class="text-muted">Calculated using {{ model_name }}</p>
+
+        {% if greeks %}
+        <hr>
+        <h4 class="h5 mb-3">Greeks</h4>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Greek</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, value in greeks.items() %}
+                        <tr>
+                            <td class="text-capitalize">{{ name }}</td>
+                            <td>{{ "%.4f"|format(value) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="text-center text-muted small mt-4">
+    Backend: Python option pricing engine (Black–Scholes & Binomial).
+</div>
+{% endblock %}
