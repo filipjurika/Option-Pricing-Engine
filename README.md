@@ -1,5 +1,5 @@
 # Option-Pricing-Engine
-Option pricing engine in Python showcasing algorithms, dynamic programming, and Monte Carlo simulation for European and American options.
+Option pricing engine in Python showcasing algorithms, dynamic programming, and Base or Bachelier for European and American options.
 ## Features
 
 - **Option & market models**
@@ -7,7 +7,7 @@ Option pricing engine in Python showcasing algorithms, dynamic programming, and 
 - **Pricing models**
   - Black–Scholes closed-form model for European options
   - Binomial tree model for European and American options (backward induction / dynamic programming)
-  - Optional Monte Carlo simulation for European options
+  - Base or Bachelier for European options
 - **Risk metrics**
   - Core Greeks (e.g. Delta, Gamma, Vega, Theta, Rho) for Black–Scholes
   - Implied volatility solver using numerical root-finding
